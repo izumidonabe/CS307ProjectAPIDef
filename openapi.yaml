@@ -1,0 +1,1002 @@
+openapi: 3.1.0
+info:
+  title: API
+  version: 1.0.0
+servers:
+- url: /
+security:
+- BearerAuth: []
+paths:
+  /login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_login_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_login_post_200_response'
+          description: 成功
+        "401":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 用户名或密码错误
+      security: []
+      summary: 登录
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /register:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_register_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 成功
+        "403":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 用户已存在
+      security: []
+      summary: 注册
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /setRole:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_setRole_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 成功
+        "403":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 无权限
+      summary: 设置用户角色
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /article/{article_id}/citations/{year}:
+    get:
+      parameters:
+      - description: 文章的 ID
+        explode: false
+        in: path
+        name: article_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - description: 年份
+        explode: false
+        in: path
+        name: year
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: integer
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到文章
+      summary: 获取文章在指定年份的引用次数
+      x-accepts:
+      - application/json
+  /article/addArticleAndUpdateIF/{article_id}:
+    post:
+      parameters:
+      - description: 文章的 ID
+        explode: false
+        in: path
+        name: article_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_article_addArticleAndUpdateIF__article_id__post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: number
+                format: double
+          description: 成功
+        "403":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 无权限
+      summary: 添加文章并更新影响因子
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /author/getArticlesByAuthorSortedByCitations:
+    get:
+      parameters:
+      - description: 作者的名
+        explode: true
+        in: query
+        name: fore_name
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 作者的姓
+        explode: true
+        in: query
+        name: last_name
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 作者的缩写
+        explode: true
+        in: query
+        name: initials
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 作者的集体名称
+        explode: true
+        in: query
+        name: collective_name
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  description: 文章ID
+                  type: integer
+                type: array
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到作者
+      summary: 获取作者的文章按引用次数排序
+      x-accepts:
+      - application/json
+  /author/getJournalWithMostArticlesByAuthor:
+    get:
+      parameters:
+      - description: 作者的名
+        explode: true
+        in: query
+        name: fore_name
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 作者的姓
+        explode: true
+        in: query
+        name: last_name
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 作者的缩写
+        explode: true
+        in: query
+        name: initials
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 作者的集体名称
+        explode: true
+        in: query
+        name: collective_name
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到作者
+      summary: 获取作者发表文章最多的期刊
+      x-accepts:
+      - application/json
+  /author/getMinArticlesToLinkAuthors:
+    get:
+      parameters:
+      - description: 第一个作者的名
+        explode: true
+        in: query
+        name: fore_name1
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 第一个作者的姓
+        explode: true
+        in: query
+        name: last_name1
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 第一个作者的缩写
+        explode: true
+        in: query
+        name: initials1
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 第一个作者的集体名称
+        explode: true
+        in: query
+        name: collective_name1
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 第二个作者的名
+        explode: true
+        in: query
+        name: fore_name2
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 第二个作者的姓
+        explode: true
+        in: query
+        name: last_name2
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 第二个作者的缩写
+        explode: true
+        in: query
+        name: initials2
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 第二个作者的集体名称
+        explode: true
+        in: query
+        name: collective_name2
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: integer
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到作者
+      summary: 获取连接两个作者所需的最少文章数
+      x-accepts:
+      - application/json
+  /databaseServices/getGroupMembers:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  description: 学号
+                  type: integer
+                type: array
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: NOT FOUND
+      summary: 获取本组的成员
+      x-accepts:
+      - application/json
+  /grant/getCountryFundPapers/{country}:
+    get:
+      parameters:
+      - description: 国家
+        explode: false
+        in: path
+        name: country
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  description: 文章ID
+                  type: integer
+                type: array
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到国家或国家没有资助
+      summary: 获取各国资助的论文id
+      x-accepts:
+      - application/json
+  /journal/getJournalIF/{journal_id}/{year}:
+    get:
+      parameters:
+      - description: 期刊id
+        explode: false
+        in: path
+        name: journal_id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: 年份
+        explode: false
+        in: path
+        name: year
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: number
+                format: double
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到期刊
+      summary: 获取期刊在指定年份的影响因子
+      x-accepts:
+      - application/json
+  /journal/updateJournalName:
+    post:
+      parameters:
+      - description: 旧的期刊 ID
+        explode: true
+        in: query
+        name: old_journal_id
+        required: true
+        schema:
+          type: integer
+        style: form
+      - description: 需要更新的年份（包括该年份）
+        explode: true
+        in: query
+        name: year
+        required: true
+        schema:
+          type: integer
+        style: form
+      - description: 新的期刊名称
+        explode: true
+        in: query
+        name: new_name
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 新的期刊 ID
+        explode: true
+        in: query
+        name: new_id
+        required: true
+        schema:
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: boolean
+          description: 成功
+        "403":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 无权限
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到期刊
+      summary: 更新期刊名称
+      x-accepts:
+      - application/json
+  /keyword/getArticleCountByKeywordInPastYears:
+    get:
+      parameters:
+      - description: 关键词
+        explode: true
+        in: query
+        name: keyword
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  description: 文章数量
+                  type: integer
+                type: array
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到关键词
+      summary: 获取关键词在过去几年的文章数量
+      x-accepts:
+      - application/json
+  /article/getArticleByAuthor:
+    get:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_article_getArticleByAuthor_get_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/_article_getArticleByAuthor_get_200_response_inner'
+                type: array
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到作者
+      summary: 获取作者的文章
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /article/search:
+    get:
+      parameters:
+      - description: 模糊匹配的文章标题
+        explode: true
+        in: query
+        name: title
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/_article_getArticleByAuthor_get_200_response_inner'
+                type: array
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到匹配的文章
+      summary: 根据标题模糊查询文章
+      x-accepts:
+      - application/json
+  /article/byJournal/{journal_id}:
+    get:
+      parameters:
+      - description: 期刊ID
+        explode: false
+        in: path
+        name: journal_id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/_article_getArticleByAuthor_get_200_response_inner'
+                type: array
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到期刊或期刊没有文章
+      summary: 根据期刊查找文章（查这个Journal里都有哪些文章）
+      x-accepts:
+      - application/json
+  /article/{article_id}:
+    post:
+      parameters:
+      - description: 要修改的文章ID
+        explode: false
+        in: path
+        name: article_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_article__article_id__post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 修改成功
+        "403":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 无权限修改该文章
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到指定的文章
+      summary: 文章作者修改文章的其他属性
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /article/manageAuthors:
+    post:
+      parameters:
+      - description: 文章ID
+        explode: true
+        in: query
+        name: article_id
+        required: true
+        schema:
+          type: integer
+        style: form
+      - description: 要增加的作者id
+        explode: true
+        in: query
+        name: author_id_to_add
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+      - description: 要删除的作者id
+        explode: true
+        in: query
+        name: author_id_to_delete
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 修改成功
+        "403":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 无权限进行此操作
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到指定的文章或作者
+      summary: 超级管理员管理文章的作者
+      x-accepts:
+      - application/json
+  /journal/{journal_id}:
+    post:
+      parameters:
+      - description: 要修改的期刊ID
+        explode: false
+        in: path
+        name: journal_id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_journal__journal_id__put_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 修改成功
+        "403":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 无权限进行此操作
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到指定的期刊
+      summary: 期刊管理员修改期刊的所有属性及包含的文章
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /article/{article_id}/info:
+    get:
+      parameters:
+      - description: 要查询的文章ID
+        explode: false
+        in: path
+        name: article_id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_article__article_id__info_get_200_response'
+          description: 成功
+        "404":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: 未找到指定的文章
+      summary: 按照文章ID查询文章，返回文章的标题和所有作者
+      x-accepts:
+      - application/json
+  /setID:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_setID_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_setID_post_response'
+          description: 成功
+      summary: 设置用户ID
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    _article_getArticleByAuthor_get_200_response_inner:
+      example:
+        id: 0
+        title: title
+      properties:
+        id:
+          description: 文章ID
+          type: integer
+        title:
+          description: 文章标题
+          type: string
+    _article__article_id__info_get_200_response:
+      example:
+        title: title
+        authors:
+        - authors
+        - authors
+      properties:
+        title:
+          description: 文章标题
+          type: string
+        authors:
+          description: 作者列表
+          items:
+            type: string
+          type: array
+    _journal__journal_id__put_request:
+      properties:
+        country:
+          description: 期刊所属国家
+          type: string
+        issn:
+          description: 期刊ISSN
+          type: string
+        title:
+          description: 期刊名称
+          type: string
+        volume:
+          description: 期刊卷数
+          type: string
+        issue:
+          description: 期刊期数
+          type: string
+        list_of_articles_to_add:
+          description: 需要添加的文章ID
+          items:
+            type: integer
+          type: array
+        list_of_articles_to_remove:
+          description: 需要移除的文章ID
+          items:
+              type: integer
+          type: array
+    _login_post_request:
+      properties:
+        username:
+          description: 用户名
+          type: string
+        password:
+          description: 密码 按照用户的 用户名+SUSTech 作为盐值来生成哈希值
+          type: string
+    _login_post_200_response:
+      example:
+        role: role
+        token: token
+      properties:
+        token:
+          description: JWT令牌
+          type: string
+        role:
+          description: 角色
+          type: string
+    _article_addArticleAndUpdateIF__article_id__post_request_publication_types_inner:
+      properties:
+        id:
+          description: 发表类型列表_id
+          type: string
+        name:
+          description: 发表类型列表_name
+          type: string
+    _article_addArticleAndUpdateIF__article_id__post_request_grants_inner:
+      properties:
+        id:
+          description: 资助列表_id
+          type: integer
+        acronym:
+          description: 资助列表_acronym
+          type: string
+        country:
+          description: 资助列表_country
+          type: string
+    _setRole_post_request:
+      properties:
+        username:
+          description: 用户名
+          type: string
+        role:
+          description: 角色
+          type: string
+    _article__article_id__post_request:
+      properties:
+        title:
+          description: 文章标题
+          type: string
+        pub_model:
+          description: 发表模式
+          type: string
+        date_created:
+          description: 创建日期
+          type: string
+        date_completed:
+          description: 完成日期
+          type: string
+        keywords:
+          description: 关键词列表
+          items:
+            type: string
+          type: array
+    _article_getArticleByAuthor_get_request:
+      properties:
+        fore_name:
+          description: 作者的名
+          type: string
+        last_name:
+          description: 作者的姓
+          type: string
+        initials:
+          description: 作者的缩写
+          type: string
+        is_collective_name:
+          description: 是否为集体名称
+          type: boolean
+    _register_post_request:
+      properties:
+        username:
+          description: 用户名
+          type: string
+        password:
+          description: 密码
+          type: string
+    _article_addArticleAndUpdateIF__article_id__post_request_article_ids_inner_inner:
+      properties:
+        ty:
+          description: 文章 ty
+          type: integer
+        id:
+          description: 文章 ID
+          type: integer
+    _article_addArticleAndUpdateIF__article_id__post_request:
+      properties:
+        authors:
+          description: 作者列表
+          items:
+            type: string
+          type: array
+        title:
+          description: 文章标题
+          type: string
+        keywords:
+          description: 关键词列表
+          items:
+            type: string
+          type: array
+        journal:
+          description: 期刊名称
+          type: string
+        references:
+          description: 参考文献列表
+          items:
+            type: integer
+          type: array
+        article_ids:
+          description: 文章 ID
+          items:
+            items:
+              $ref: '#/components/schemas/_article_addArticleAndUpdateIF__article_id__post_request_article_ids_inner_inner'
+            type: array
+          type: array
+        publication_types:
+          description: 发表类型列表
+          items:
+            $ref: '#/components/schemas/_article_addArticleAndUpdateIF__article_id__post_request_publication_types_inner'
+          type: array
+        grants:
+          description: 资助列表
+          items:
+            $ref: '#/components/schemas/_article_addArticleAndUpdateIF__article_id__post_request_grants_inner'
+          type: array
+        date_created:
+          description: 创建日期
+          type: string
+        date_completed:
+          description: 完成日期
+          type: string
+        pub_model:
+          description: 发表模式
+          type: string
+    _setID_post_request:
+      properties:
+        user_id:
+          description: 用户ID
+          type: string
+        new_id:
+          description: 新的ID
+          type: string
+    _setID_post_response:
+      properties:
+        status:
+          description: 状态
+          type: string
+        message:
+          description: 消息
+          type: string
+  securitySchemes:
+    BearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
